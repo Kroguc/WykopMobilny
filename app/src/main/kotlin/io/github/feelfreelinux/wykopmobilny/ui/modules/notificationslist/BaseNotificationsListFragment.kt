@@ -33,16 +33,22 @@ abstract class BaseNotificationsListFragment : BaseFragment(), NotificationsList
             prepare()
             adapter = notificationAdapter
             clearOnScrollListeners()
-            addOnScrollListener(InfiniteScrollListener({
-                recyclerView.post { notificationAdapter.isLoading = true }
-                loadMore()
-            }, layoutManager as LinearLayoutManager))
+            setInfiniteScrollListener()
         }
         swiperefresh.isRefreshing = false
         super.onActivityCreated(savedInstanceState)
     }
 
+    private fun setInfiniteScrollListener() {
+        recyclerView.apply {
+            clearOnScrollListeners()
+            addOnScrollListener(InfiniteScrollListener(
+                    { loadMore() }, layoutManager as LinearLayoutManager))
+        }
+    }
+
     override fun addNotifications(notifications: List<Notification>, shouldClearAdapter : Boolean) {
+        if (shouldClearAdapter) setInfiniteScrollListener()
         if (notifications.isNotEmpty()) {
             recyclerView.post {
                 loadingView.isVisible = false
@@ -58,6 +64,7 @@ abstract class BaseNotificationsListFragment : BaseFragment(), NotificationsList
     }
 
     override fun disableLoading() {
+        recyclerView.clearOnScrollListeners()
         notificationAdapter.disableLoading()
     }
 

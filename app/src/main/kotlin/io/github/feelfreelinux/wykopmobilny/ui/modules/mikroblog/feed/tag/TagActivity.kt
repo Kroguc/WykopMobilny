@@ -115,6 +115,7 @@ class TagActivity : BaseActivity(), TagView {
     override fun setObserveState(tagState: TagStateResponse) {
         tagMeta?.isBlocked = tagState.isBlocked
         tagMeta?.isObserved = tagState.isObserved
+        invalidateOptionsMenu()
     }
 
     override fun onPause() {
